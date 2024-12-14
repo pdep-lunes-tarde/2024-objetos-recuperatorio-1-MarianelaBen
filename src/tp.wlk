@@ -1,8 +1,8 @@
 class Mago{ 
-    var objetosMagicos = []
-    var poderInnato = 0
-    var nombre = ""
-    var resistenciaMagica = 0
+    const objetosMagicos = []
+    const poderInnato = 0
+    const nombre
+    const resistenciaMagica = 0
     var categoria
     var energiaMagica = 0
 
@@ -26,7 +26,7 @@ class Mago{
         energiaMagica += cantidad
     }
 
-    method esVencido(mago, atacante) = categoria.esVencido(self, atacante) 
+    method esVencido(atacante) = categoria.esVencido(self, atacante) 
 
     method cambiarCategoria(nuevaCategoria){
         categoria = nuevaCategoria
@@ -48,7 +48,7 @@ class Mago{
 }
 
 class ObjetoMagico{
-    var poderBase = 0
+    const poderBase = 0
 
     method poderBase(mago){
         return poderBase
@@ -103,19 +103,37 @@ object magoInmortal{
 }
 
 class Gremio{
-    var miembros = []
+    const miembros = []
+
+    method miembros(){
+        if(miembros.size() < 2){
+            self.error("No cuenta con miembros suficientes")
+        }
+        return miembros
+    }
     
     method poderTotal() = miembros.sum({m => m.poderTotal()})
 
     method energiaMagica() = miembros.sum({m => m.energiaMagica()})
 
+    method resistenciaMagica() = miembros.sum({m => m.resistenciaMagica()})
+
+
     method lider() = miembros.max({m => m.poderTotal()})
 
     method desafiar(gremio){
-
+        if(!gremio.esVencido(self)){
+            self.error("No puede vencer al gremio desafiado.")
+        }
+        self.lider().ganarEnergiaMagica(gremio.energiaMagicaQuePierde())
+        gremio.perderEnergiaMagica()
     }
 
-    method esVencido(gremioAtacante){
-        if()
+    method perderEnergiaMagica(){
+        miembros.forEach({m => m.perderEnergiaMagica(m.energiaMagicaQuePierde())})
     }
+
+    method esVencido(gremioAtacante) = gremioAtacante.poderTotal() > self.resistenciaMagica() + self.lider().resistenciaMagica()
+
+    method energiaMagicaQuePierde() = miembros.sum({m => m.energiaMagicaQuePierde()})
 }
