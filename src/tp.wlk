@@ -20,7 +20,7 @@ class Mago{
         poderInnato = valor
     }
 
-    method poderTotal() = objetosMagicos.sum({o => o.poderBase(self)})*poderInnato
+    method poderTotal() = objetosMagicos.sum({o => o.poder(self)})*poderInnato
 
     method tieneNombrePar() = nombre.size().even()
 
@@ -67,13 +67,13 @@ class Mago{
 class ObjetoMagico{
     const poderBase = 0
 
-    method poderBase(mago){
+    method poder(mago){
         return poderBase
     }   
 }
 
 object varita inherits ObjetoMagico{
-    override method poderBase(mago){
+    override method poder(mago){
         if(mago.tieneNombrePar()){
             return super(mago)*1.5
         }
@@ -82,23 +82,23 @@ object varita inherits ObjetoMagico{
 }
 
 class TunicaComun inherits ObjetoMagico{
-    override method poderBase(mago){
+    override method poder(mago){
         return super(mago) + 2*mago.resistenciaMagica()
     }
 }
 
 object tunicaEpica inherits TunicaComun{
-    override method poderBase(mago){
+    override method poder(mago){
         return super(mago) + 10
     }
 }
 
 object amuleto inherits ObjetoMagico{
-    override method poderBase(mago) = 200
+    override method poder(mago) = 200
 }
 
 object ojota inherits ObjetoMagico{
-    override method poderBase(mago) = 10 * mago.nombre().size()
+    override method poder(mago) = 10 * mago.nombre().size()
 }
 
 object aprendiz{
@@ -117,6 +117,8 @@ object magoVeterano{
 
 object magoInmortal{
     method esVencido(mago, atacante) = false
+
+    method energiaMagicaQuePierde(mago) = 0
 }
 
 class Gremio{
@@ -139,6 +141,7 @@ class Gremio{
 
     method lider(){
         lider = miembros.max({m => m.poderTotal()})
+        self.mismoLiderParaTodos() //esto lo agrego por el punto B.3.
         return lider
     }
     
