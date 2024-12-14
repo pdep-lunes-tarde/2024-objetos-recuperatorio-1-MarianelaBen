@@ -2,9 +2,10 @@ class Mago{
     const objetosMagicos = []
     var poderInnato = 1
     const nombre
-    const resistenciaMagica = 0
+    const resistenciaMagica
     var categoria
-    var energiaMagica = 0
+    var energiaMagica 
+    var lider // esto lo agregué por el punto B.3.
 
     method nombre() = nombre 
 
@@ -50,10 +51,17 @@ class Mago{
 
     method desafiar(magoOGremio){
         if(!magoOGremio.esVencido(self)){
-           self.error("No pudo vencer al mago que desafió.") 
+           self.error("No pudo vencer al mago o gremio que desafió.") 
         }
         self.robarEnergiaMagica(magoOGremio)
     }
+
+    //los métodos de abajo los agruegué para que soporte el requerimiento del punto B.3.
+    method asignarLider(nuevoLider){
+        lider = nuevoLider
+    }
+
+    method lider() = lider
 }
 
 class ObjetoMagico{
@@ -64,10 +72,10 @@ class ObjetoMagico{
     }   
 }
 
-class Varita inherits ObjetoMagico{
+object varita inherits ObjetoMagico{
     override method poderBase(mago){
         if(mago.tieneNombrePar()){
-            return super(mago) + poderBase*0.5
+            return super(mago)*1.5
         }
         return super(mago)
     }
@@ -79,13 +87,13 @@ class TunicaComun inherits ObjetoMagico{
     }
 }
 
-class TunicaEpica inherits TunicaComun{
+object tunicaEpica inherits TunicaComun{
     override method poderBase(mago){
         return super(mago) + 10
     }
 }
 
-class Amuleto inherits ObjetoMagico{
+object amuleto inherits ObjetoMagico{
     override method poderBase(mago) = 200
 }
 
@@ -113,6 +121,7 @@ object magoInmortal{
 
 class Gremio{
     const miembros = []
+    var lider
 
     method miembros(){
         if(miembros.size() < 2){
@@ -128,7 +137,10 @@ class Gremio{
     method resistenciaMagica() = miembros.sum({m => m.resistenciaMagica()})
 
 
-    method lider() = miembros.max({m => m.poderTotal()})
+    method lider(){
+        lider = miembros.max({m => m.poderTotal()})
+        return lider
+    }
     
     method robarEnergiaMagica(gremioOMago){
         self.lider().ganarEnergiaMagica(gremioOMago.energiaMagicaQuePierde())
@@ -143,10 +155,17 @@ class Gremio{
     }
 
     method perderEnergiaMagica(cantidad){
-        miembros.forEach({m => m.perderEnergiaMagica(cantidad)})
+        miembros.forEach({m => m.perderEnergiaMagica(m.energiaMagicaQuePierde())})
     }
 
     method esVencido(atacante) = atacante.poderTotal() > self.resistenciaMagica() + self.lider().resistenciaMagica()
 
     method energiaMagicaQuePierde() = miembros.sum({m => m.energiaMagicaQuePierde()})
+
+    //los métodos de abajo los agregué para que soporte el requerimiento del punto B.3.
+    method asignarLider(nuevoLider){
+        lider = nuevoLider
+    }
+
+    method mismoLiderParaTodos() = miembros.forEach({m => m.asignarLider(self.lider())})
 }
