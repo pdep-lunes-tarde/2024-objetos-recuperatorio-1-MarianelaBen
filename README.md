@@ -6,7 +6,7 @@ En papel
 
 ## Estudiante
 
-**Nombre y apellido:** -completar acá-
+**Nombre y apellido:** Marianela Benítez
 
 **Número de legajo:** -completar acá-
 

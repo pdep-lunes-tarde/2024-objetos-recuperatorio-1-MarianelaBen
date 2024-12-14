@@ -1,6 +1,6 @@
 class Mago{ 
     const objetosMagicos = []
-    const poderInnato = 0
+    var poderInnato = 1
     const nombre
     const resistenciaMagica = 0
     var categoria
@@ -8,7 +8,16 @@ class Mago{
 
     method nombre() = nombre 
 
-    method poderInnato() = poderInnato.between(1, 10)
+    method poderInnato(){
+        if(!poderInnato.between(1, 10)){
+            self.error("El poder innato debe estar entre 1 y 10")
+        }
+        return poderInnato
+    }
+
+    method reasignarPoderInnato(valor){
+        poderInnato = valor
+    }
 
     method poderTotal() = objetosMagicos.sum({o => o.poderBase(self)})*poderInnato
 
@@ -34,16 +43,16 @@ class Mago{
 
     method energiaMagicaQuePierde() = categoria.energiaMagicaQuePierde(self)
 
-    method robarEnergiaMagica(otroMago){
-        self.ganarEnergiaMagica(otroMago.energiaMagicaQuePierde())
-        otroMago.perderEnergiaMagica(otroMago.energiaMagicaQuePierde())
+    method robarEnergiaMagica(magoOGremio){
+        self.ganarEnergiaMagica(magoOGremio.energiaMagicaQuePierde())
+        magoOGremio.perderEnergiaMagica(magoOGremio.energiaMagicaQuePierde())
     }
 
-    method desafiar(otroMago){
-        if(!otroMago.esVencido(otroMago, self)){
+    method desafiar(magoOGremio){
+        if(!magoOGremio.esVencido(self)){
            self.error("No pudo vencer al mago que desafió.") 
         }
-        self.robarEnergiaMagica(otroMago)
+        self.robarEnergiaMagica(magoOGremio)
     }
 }
 
@@ -120,20 +129,24 @@ class Gremio{
 
 
     method lider() = miembros.max({m => m.poderTotal()})
+    
+    method robarEnergiaMagica(gremioOMago){
+        self.lider().ganarEnergiaMagica(gremioOMago.energiaMagicaQuePierde())
+        gremioOMago.perderEnergiaMagica(gremioOMago.energiaMagicaQuePierde())
+    }
 
-    method desafiar(gremio){
-        if(!gremio.esVencido(self)){
-            self.error("No puede vencer al gremio desafiado.")
+    method desafiar(gremioOMago){
+        if(!gremioOMago.esVencido(self)){
+            self.error("No puede vencer al gremio o mago desafiado.")
         }
-        self.lider().ganarEnergiaMagica(gremio.energiaMagicaQuePierde())
-        gremio.perderEnergiaMagica()
+        self.robarEnergiaMagica(gremioOMago)
     }
 
-    method perderEnergiaMagica(){
-        miembros.forEach({m => m.perderEnergiaMagica(m.energiaMagicaQuePierde())})
+    method perderEnergiaMagica(cantidad){
+        miembros.forEach({m => m.perderEnergiaMagica(cantidad)})
     }
 
-    method esVencido(gremioAtacante) = gremioAtacante.poderTotal() > self.resistenciaMagica() + self.lider().resistenciaMagica()
+    method esVencido(atacante) = atacante.poderTotal() > self.resistenciaMagica() + self.lider().resistenciaMagica()
 
     method energiaMagicaQuePierde() = miembros.sum({m => m.energiaMagicaQuePierde()})
 }
