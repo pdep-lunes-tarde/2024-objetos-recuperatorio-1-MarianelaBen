@@ -8,7 +8,7 @@ En papel
 
 **Nombre y apellido:** Marianela Benítez
 
-**Número de legajo:** -completar acá-
+**Número de legajo:** 213.506-1
 
 ## Que hacer cuando terminan el parcial
 
